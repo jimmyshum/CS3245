@@ -53,7 +53,7 @@ Dictionary will contain all terms from documents
 Posting list will contain the list of DocID for a particular term
 """
 
-path = "/Users/dennisli/Desktop/CS3245/reuters/testing2/" 
+path = "/Users/dennisli/Desktop/CS3245/reuters/testing/" 
 
 
 
@@ -240,7 +240,7 @@ def index(directory_of_documents, dictionary_name, posting):
 				os.rename("tmp",posting)
 
 		current_doc.close()
-	print dictionary
+	# print dictionary
 
 
 def find_index(term, list):
