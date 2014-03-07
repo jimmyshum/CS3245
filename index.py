@@ -103,10 +103,6 @@ def index(directory_of_documents, dictionary_name, posting):
 				token = token.lower()
 			doc_tokens.extend(line_tokens)
 		doc_tokens.sort()
-		"""
-		print "doc_token:"
-		print doc_tokens
-		"""
 
 		# find replicate and count the freq, store into 2D list 
 		freq = []
@@ -123,10 +119,7 @@ def index(directory_of_documents, dictionary_name, posting):
 				freq.append([prv_token,count])
 				prv_token = one_token
 		freq.append([prv_token,count])
-		"""
-		print "freq:"
-		print freq
-		"""
+		
 		# insert into dictionary and posting
 		for term in freq:
 			position = find_index(term, dictionary)
@@ -152,6 +145,7 @@ def index(directory_of_documents, dictionary_name, posting):
 				post_file.seek(0)
 
 				# Now, to skip to line n (with the first line being line 0, just dofile.seek(line_offset[n])
+				"""
 				if (dict_posit < len(line_offset) ):
 					# case add line to line n of the file
 					post_file.seek(line_offset[dict_posit])
@@ -164,6 +158,30 @@ def index(directory_of_documents, dictionary_name, posting):
 					data = doc_file + " \n"
 					post_file.write(data)
 					post_file.close()
+				"""
+				data = doc_file + " \n"
+
+				post_file.seek(0,0)
+				tmp_file = open("tmp","w")
+				line_count = 0
+				for post_line in post_file:
+					if line_count == dict_posit:
+						tmp_file.write(data)
+						tmp_file.write(post_line)
+					else:
+						tmp_file.write(post_line)
+					line_count = line_count + 1
+
+				if line_count < dict_posit:
+					tmp_file.write(data)
+
+				post_file.close()
+				tmp_file.close()
+
+				# replace tmp file to posting file
+				os.remove(posting)
+				os.rename("tmp",posting)
+
 			else:
 				# case term's positing already exist in dict 
 
@@ -186,7 +204,11 @@ def index(directory_of_documents, dictionary_name, posting):
 
 				# read target posting list from file
 				dict_posit = find_index(term, dictionary)
-				post_file.seek(line_offset[dict_posit])
+				if (dict_posit < len(line_offset) ):
+					post_file.seek(line_offset[dict_posit])
+				else:
+					post_file.seek(0,2)
+				
 				target_line = post_file.readline()
 				target_line_postings = target_line.split(" ")
 				# add the new DocID and sort
@@ -218,6 +240,7 @@ def index(directory_of_documents, dictionary_name, posting):
 				os.rename("tmp",posting)
 
 		current_doc.close()
+	print dictionary
 
 
 def find_index(term, list):
