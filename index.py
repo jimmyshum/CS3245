@@ -52,7 +52,7 @@ Dictionary will contain all terms from documents
 Posting list will contain the list of DocID for a particular term
 """
 
-path = "/Users/dennisli/Desktop/CS3245/reuters/testing/" 
+path = "/Users/dennisli/Desktop/CS3245/reuters/testing2/" 
 
 
 def read_dict(dictionary_name):
@@ -60,7 +60,9 @@ def read_dict(dictionary_name):
 	line_num = 0
 	dict_file = open(dictionary_name)
 	for line in dict_file:
-		dictionary.append(line)
+		word = nltk.word_tokenize(line)
+		word[1] = int(word[1])
+		dictionary.append(word)
 		line_num = line_num + 1
 	dict_file.close()
 	return dictionary
@@ -72,6 +74,7 @@ def get_doc_list():
 
 def index(directory_of_documents, dictionary_name, posting):
 	dictionary = read_dict(dictionary_name)
+	print dictionary
 	doc_list = get_doc_list()
 
 	for doc_file in doc_list:
@@ -97,7 +100,31 @@ def index(directory_of_documents, dictionary_name, posting):
 
 		# insert into dictionary and posting
 		for term in freq:
-			# not fininsheds
+			position = find_index(term[0], dictionary)
+			if (position == -1):
+				dictionary.append(term)
+				dictionary.sort()
+				
+				dict_posit = find_index(term, dictionary)
+
+				# add the line on the posting list 
+
+				post_file = open(posting, "rw+")
+
+				line_offset =[]
+				offset =0
+				for line in post_file:    
+					line_offset.append(offset)    
+					offset += len(line)
+				post_file.seek(0)
+
+				# Now, to skip to line n (with the first line being line 0), just dofile.seek(line_offset[n])
+				if (dict_posit < len(line_offset) ):
+					post_file.seek(line_offset[dict_posit])
+					data = doc_file + "\n"
+					post_file.writelines(data)
+					post_file.close()
+
 
 
 		current_doc.close()
@@ -106,10 +133,11 @@ def index(directory_of_documents, dictionary_name, posting):
 def find_index(string, list):
 	count = 0
 	for item in list:
-		if string = item:
+		if string == item:
 			return count
 		else:
 			count = count + 1
+	return -1
 
 
 
