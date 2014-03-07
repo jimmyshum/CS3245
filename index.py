@@ -3,10 +3,11 @@
 # read inputs from command (file position and names)
 
 # read dictionary file (if exist) , store to memory as List
-# loop all files
-	# read 1 file
-	# tokenizer into separated word
-	# do case folding
+	# not needed
+# loop all files 	done
+	# read 1 file  done
+	# tokenizer into separated word  done
+	# do case folding	done
 	# sorting the terms
 		# loop each terms
 		# count freqency (find replicates)
@@ -55,6 +56,7 @@ Posting list will contain the list of DocID for a particular term
 path = "/Users/dennisli/Desktop/CS3245/reuters/testing2/" 
 
 
+
 def read_dict(dictionary_name):
 	dictionary = []
 	line_num = 0
@@ -67,14 +69,28 @@ def read_dict(dictionary_name):
 	dict_file.close()
 	return dictionary
 
+def write_dict(dictionary_name, dictionary):
+	dict_file = open(dictionary_name, "w")
+	for term in dictionary:
+		line = term[0] + " " + str(term[1]) + "\n"
+		dict_file.write(line)
+	dict_file.close()
+		
+
+
 def get_doc_list():
 	dirs = os.listdir( path )
 	return dirs
 
 
 def index(directory_of_documents, dictionary_name, posting):
+	"""
 	dictionary = read_dict(dictionary_name)
+	print "read_dictionary: "
 	print dictionary
+	"""
+	dictionary = []
+
 	doc_list = get_doc_list()
 
 	for doc_file in doc_list:
@@ -82,35 +98,52 @@ def index(directory_of_documents, dictionary_name, posting):
 		doc_tokens = []
 		for line in current_doc:
 			line_tokens = nltk.word_tokenize(line)
+			# lowercase all tokens
+			for token in line_tokens:
+				token = token.lower()
 			doc_tokens.extend(line_tokens)
 		doc_tokens.sort()
+		"""
+		print "doc_token:"
+		print doc_tokens
+		"""
 
 		# find replicate and count the freq, store into 2D list 
 		freq = []
 		count = 1
 		prv_token = ""
+		one_token = ""
 		for one_token in doc_tokens:
+			if (prv_token == ""):
+				prv_token = one_token
+				continue
 			if (one_token == prv_token):
-				count = count + 1
 				prv_token = one_token
 			else:
-				freq.append([one_token,count])
-				count = 1 
+				freq.append([prv_token,count])
 				prv_token = one_token
-
+		freq.append([prv_token,count])
+		"""
+		print "freq:"
+		print freq
+		"""
 		# insert into dictionary and posting
 		for term in freq:
-			position = find_index(term[0], dictionary)
+			position = find_index(term, dictionary)
+			# case term not in dictionary (new term)
 			if (position == -1):
+				# add item to list dictionary, sort and get new line number
 				dictionary.append(term)
 				dictionary.sort()
-				
 				dict_posit = find_index(term, dictionary)
 
+				# write to dictionary file
+				write_dict(dictionary_name,dictionary)
+
 				# add the line on the posting list 
+				post_file = open(posting, "r+")
 
-				post_file = open(posting, "rw+")
-
+				# read posting and get line_offset for jumping
 				line_offset =[]
 				offset =0
 				for line in post_file:    
@@ -118,22 +151,79 @@ def index(directory_of_documents, dictionary_name, posting):
 					offset += len(line)
 				post_file.seek(0)
 
-				# Now, to skip to line n (with the first line being line 0), just dofile.seek(line_offset[n])
+				# Now, to skip to line n (with the first line being line 0, just dofile.seek(line_offset[n])
 				if (dict_posit < len(line_offset) ):
+					# case add line to line n of the file
 					post_file.seek(line_offset[dict_posit])
-					data = doc_file + "\n"
-					post_file.writelines(data)
+					data = doc_file + " \n"
+					post_file.write(data)
 					post_file.close()
+				else: 
+					# case add to the end of file
+					post_file.seek(0,2)
+					data = doc_file + " \n"
+					post_file.write(data)
+					post_file.close()
+			else:
+				# case term's positing already exist in dict 
 
+				# edit the freq of dictionary list
+				for dictionary_entry in dictionary:
+					if(dictionary_entry[0] == term[0]):
+						dictionary_entry[1] = dictionary_entry[1] + term[1]
+				# write the change to dict file
+				write_dict(dictionary_name,dictionary)
 
+				# edit the posting file
+				post_file = open(posting, "r+")
+				# read posting and get line_offset for jumping
+				line_offset =[]
+				offset =0
+				for line in post_file:    
+					line_offset.append(offset)    
+					offset += len(line)
+				post_file.seek(0)
+
+				# read target posting list from file
+				dict_posit = find_index(term, dictionary)
+				post_file.seek(line_offset[dict_posit])
+				target_line = post_file.readline()
+				target_line_postings = target_line.split(" ")
+				# add the new DocID and sort
+				if not(doc_file in target_line_postings):
+					target_line_postings.append(doc_file)
+				target_line_postings.sort()
+				data  = ""
+				for doc_id in target_line_postings:
+					if doc_id != '\n':					
+					 	data = data + doc_id + " "
+				data = data + "\n"
+
+				# write each line to another file  )
+				post_file.seek(0,0)
+				tmp_file = open("tmp","w")
+				line_count = 0
+				for post_line in post_file:
+					if line_count == dict_posit:
+						tmp_file.write(data)
+					else:
+						tmp_file.write(post_line)
+					line_count = line_count + 1
+
+				post_file.close()
+				tmp_file.close()
+
+				# replace tmp file to posting file
+				os.remove(posting)
+				os.rename("tmp",posting)
 
 		current_doc.close()
 
 
-def find_index(string, list):
+def find_index(term, list):
 	count = 0
 	for item in list:
-		if string == item:
+		if (term[0] == item[0]):
 			return count
 		else:
 			count = count + 1
@@ -163,5 +253,12 @@ for o, a in opts:
 if directory_of_documents == None or dictionary_name == None or posting == None:
     usage()
     sys.exit(2)
+
+# clear content of dict and posting files
+f = open(dictionary_name, 'r+')
+f.truncate()
+
+f = open(posting, 'r+')
+f.truncate()
 
 index(directory_of_documents, dictionary_name, posting)
