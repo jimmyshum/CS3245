@@ -56,15 +56,27 @@ def search(dictionary_file,postings_file,input_file,output_file):
 		while len(stack) != 0:
 			result.append(stack.pop())
 
-		print stack
+	
 		print result
 
+###test only
+def test():
+	list1 = [1,2,3,5,6,9]
+	list2 = [2,3,4,6,7,8]
+	print opAND(list1,list2)
 
+	print opOR(list1,list2)
+	print opNOT(list1,list2)
+###test only
 
+def opAND(list1,list2):
+	return sorted(list(set(list1) & set(list2)))
 
-	
+def opOR(list1,list2):
+	return sorted(list(set(list1) | set(list2)))
 
-
+def opNOT(list1,list2):
+	return sorted(list((set(list1) | set(list2)) - set(list1)))
 
 
 def usage():
@@ -93,4 +105,5 @@ if dictionary_file == None or postings_file == None or input_file == None or out
     usage()
     sys.exit(2)
 
-search(dictionary_file,postings_file,input_file,output_file)
+#search(dictionary_file,postings_file,input_file,output_file)
+test()
