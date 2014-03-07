@@ -9,25 +9,26 @@ def search(dictionary_file,postings_file,input_file,output_file):
 	for line in inFile:
 		tokens = nltk.word_tokenize(line)
 		print tokens
+		
 	
 
 
 
 
 def usage():
-    print "usage: " + sys.argv[0] + " -b input-file-for-building-LM -t input-file-for-testing-LM -o output-file"
+    print "usage: " + sys.argv[0]
 
 dictionary_file = postings_file = input_file = output_file = None
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'p:t:q:o:')
+    opts, args = getopt.getopt(sys.argv[1:], 'd:p:q:o:')
 except getopt.GetoptError, err:
     usage()
     sys.exit(2)
 for o, a in opts:
-    if o == '-p':
+    if o == '-d':
         dictionary_file = a
-    elif o == '-t':
+    elif o == '-p':
         postings_file = a
     elif o == '-q':
         input_file = a
