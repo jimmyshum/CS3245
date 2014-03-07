@@ -102,6 +102,49 @@ def opNOT(list1,list2):
 	return sorted(list((set(list1) | set(list2)) - set(list1)))
 
 
+def read_dictionary(dictionary_file):
+	dictionary = []
+	line_num = 0
+	dict_file = open(dictionary_file)
+	for line in dict_file:
+		word = line.split(" ")
+		word[1] = int(word[1])
+		dictionary.append(word)
+		line_num = line_num + 1
+	dict_file.close()
+	return dictionary
+
+def find_index(term, list):
+	count = 0
+	for item in list:
+		if (term == item[0]):
+			return count
+		else:
+			count = count + 1
+	return -1
+
+def get_posting(postings_file, term, dictionary):
+	post_file = open(postings_file, "r+")
+	# read posting and get line_offset for jumping
+	line_offset =[]
+	offset =0
+	for line in post_file:    
+		line_offset.append(offset)    
+		offset += len(line)
+	post_file.seek(0)
+
+	# read target posting list from file
+	dict_posit = find_index(term, dictionary)
+	if (dict_posit < len(line_offset) ):
+		post_file.seek(line_offset[dict_posit])
+	else:
+		post_file.seek(0,2)
+	
+	target_line = post_file.readline()
+	target_line_postings = target_line.split(" ")
+	target_line_postings.remove("\n")
+	return target_line_postings
+
 def usage():
     print "usage: " + sys.argv[0]
 
@@ -129,4 +172,5 @@ if dictionary_file == None or postings_file == None or input_file == None or out
     sys.exit(2)
 
 #search(dictionary_file,postings_file,input_file,output_file)
-test()
+print "resutl" , get_posting(postings_file, "February", read_dictionary(dictionary_file))
+# test()
