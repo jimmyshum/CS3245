@@ -3,6 +3,15 @@ import nltk
 import sys
 import getopt
 def search(dictionary_file,postings_file,input_file,output_file):
+	inFile = open(input_file,'r')
+	outFile = open(output_file,'w')
+
+	for line in inFile:
+		tokens = nltk.word_tokenize(line)
+		print tokens
+	
+
+
 
 
 def usage():
