@@ -59,6 +59,29 @@ def search(dictionary_file,postings_file,input_file,output_file):
 	
 		print result
 
+def evaluateQuery(list):
+	result = []
+	for i in range(0,len(list)):
+		if list[i] == "AND":
+			list1 = result.pop()
+			list2 = result.pop()
+			result.append(opAND(list1,list2))
+
+		elif list[i] == "OR":
+			list1 = result.pop()
+			list2 = result.pop()
+			result.append(opOR(list1,list2))
+
+
+		elif list[i] == "NOT":
+			list1 = result.pop()
+			result.append(opNOT(list1))
+
+		else:
+			result.append(list[i])
+	return result
+
+
 ###test only
 def test():
 	list1 = [1,2,3,5,6,9]
