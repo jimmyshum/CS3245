@@ -78,8 +78,13 @@ def evaluateQuery(list):
 			result.append(opNOT(list1))
 
 		else:
-			result.append(list[i])
+			result.append(checkDictAndPost(list[i]))
 	return result
+
+##
+def checkDictAndPost(word,dictionary_file,postings_file):
+	
+	return page
 
 
 ###test only
@@ -93,6 +98,7 @@ def test():
 ###test only
 
 def opAND(list1,list2):
+
 	return sorted(list(set(list1) & set(list2)))
 
 def opOR(list1,list2):
