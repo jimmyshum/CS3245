@@ -53,7 +53,7 @@ Dictionary will contain all terms from documents
 Posting list will contain the list of DocID for a particular term
 """
 
-path = "/Users/dennisli/Desktop/CS3245/reuters/testing/" 
+path = "/Users/dennisli/Desktop/CS3245/reuters/training/" 
 
 
 

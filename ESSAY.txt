@@ -1,0 +1,30 @@
+You will observe that a large portion of the terms in the dictionary are numbers. However, we normally do not use numbers as query terms to search. Do you think it is a good idea to remove these number entries from the dictionary and the postings lists? Can you propose methods to normalize these numbers? How many percentage of reduction in disk storage do you observe after removing/normalizing these numbers?
+
+What do you think will happen if we remove stop words from the dictionary and postings file? How does it affect the searching phase?
+
+The NLTK tokenizer may not correctly tokenize all terms. What do you observe from the resulting terms produced by sent_tokenize() and word_tokenize()? Can you propose rules to further refine these results?
+
+Q1. Yes, removing the number is OK. It is because getting a list of document with a number 
+“314159” is not so meaningful. There are infinite amount of number can be indexed into the 
+dictionary. So if they are removed, the dictionary size would be reduced greatly. 
+
+The way to normalize number is that keep numbers smaller than 2099(can be years), numbers 
+having 8 digits (can be phone number), normalize small number (1-100) to the english word. 
+For example 1 normalize to one, 10 normalize to ten. 
+Using this method, the rare large number are not indexed and the “useful” number are kept
+
+The percentage of reduction is not calculated because there are not enough time to re-index
+ the whole reuters collection.
+
+Q2. After removing stop words, the dictionary size decrease. The posting list size will
+ decrease greatly. The reason is that stop word appears a lot and it have long posting 
+list. If they are removed, size of posting list decrease a lot. 
+
+For the search result, because searching stop word will return almost all of the documents,
+ a search query of phase having stop word will return a small set of result. 
+E.g “the apple” will return result of “apple”. Results of word “the” are ignored. 
+However, another effect of removing stop word’s data is that if user really want to search 
+stop word, there will be no result. It is good for phrasal query only, not for single term
+ query
+
+Q3 
