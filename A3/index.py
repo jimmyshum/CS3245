@@ -110,15 +110,16 @@ def index(directory_of_documents, dictionary_name, posting):
 		prv_token = ""
 		one_token = ""
 		for one_token in doc_tokens:
-			if (prv_token == ""):
+			if (prv_token == ""): # case first token, comparing with ""
 				prv_token = one_token
 				continue
 			if (one_token == prv_token):
+				count = count + 1
 				prv_token = one_token
 			else:
 				freq.append([prv_token,count])
 				prv_token = one_token
-		freq.append([prv_token,count])
+		freq.append([prv_token,count]) # for the last token 
 		
 		# insert into dictionary and posting
 		for term in freq:
@@ -126,7 +127,9 @@ def index(directory_of_documents, dictionary_name, posting):
 			# case term not in dictionary (new term)
 			if (position == -1):
 				# add item to list dictionary, sort and get new line number
-				dictionary.append(term)
+				doc_count = 1
+				dict_term = (term[0],doc_count)
+				dictionary.append(dict_term)
 				dictionary.sort()
 				dict_posit = find_index(term, dictionary)
 
