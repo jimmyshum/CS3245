@@ -1,45 +1,3 @@
-# stuff to do
-
-# read inputs from command (file position and names)
-
-# read dictionary file (if exist) , store to memory as List
-	# not needed
-# loop all files 	done
-	# read 1 file  done
-	# tokenizer into separated word  done
-	# do case folding	done
-	# sorting the terms
-		# loop each terms
-		# count freqency (find replicates)
-		# add term to dictionary 
-			# (update freqency if exist)
-			# (add term if not exist)
-		# read positing list of that term (if exist) (don't read the whole posing)
-		# add docID(fliename) to positing list
-		# sort positing list of that term
-	# // until all terms of DOC are read
-# // until all file are indexed. 
-
-# problems
-	# storing Dictionary
-		# term1 freq1
-		# term2 freq2
-
-		# add new term into dictionary 
-			# how to add line in the middle of the file?
-		# use line number to identify each terms
-	
-	# how to store the posting 
-		# 1 line of DocID for each term? 
-		# how about adding a new terms in the middle of the posting file? 
-			# add a line on the middle of the file?
-				# create another file 
-				# read one line from A , write to B
-				# until reacht the target line 
-				# write the line ,
-				# then continuos read&write till eof
-			# read the nth line of a file? how?
-				# read line by line using a loop (save the only line we need)
 
 import sys
 import nltk
@@ -53,7 +11,8 @@ Dictionary will contain all terms from documents
 Posting list will contain the list of DocID for a particular term
 """
 
-path = "/Users/dennisli/Desktop/CS3245/reuters/training/" 
+# for testing only
+# path = "/Users/dennisli/Desktop/CS3245A2/A3/" 
 
 
 
@@ -79,16 +38,15 @@ def write_dict(dictionary_name, dictionary):
 
 
 def get_doc_list():
-	dirs = os.listdir( path )
+	if(os.path.isfile(directory_of_documents) == False) :
+		print "directory_of_documents not exist, indexing fail"
+		exit()
+	dirs = os.listdir( directory_of_documents )
 	return dirs
 
 
 def index(directory_of_documents, dictionary_name, posting):
-	"""
-	dictionary = read_dict(dictionary_name)
-	print "read_dictionary: "
-	print dictionary
-	"""
+	
 	dictionary = []
 
 	doc_list = get_doc_list()
@@ -281,10 +239,10 @@ if directory_of_documents == None or dictionary_name == None or posting == None:
     sys.exit(2)
 
 # clear content of dict and posting files
-f = open(dictionary_name, 'r+')
-f.truncate()
+f = open(dictionary_name, 'w')
+f.close()
 
-f = open(posting, 'r+')
-f.truncate()
+f = open(posting, 'w')
+f.close()
 
 index(directory_of_documents, dictionary_name, posting)
