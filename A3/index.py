@@ -3,6 +3,8 @@ import sys
 import nltk
 import getopt
 import os 
+from nltk.stem import *
+
 
 """
 This program is to generate a index files(dictionary and posting list) 
@@ -61,6 +63,7 @@ def index(directory_of_documents, dictionary_name, posting_name):
 	posting = [] # 3d list of [term][doc][id/freq]
 	doc_list = get_doc_list()
 
+	stemmer =  PorterStemmer()
 	for doc_file in doc_list:
 		print "indexing: ",doc_file
 		if (directory_of_documents[-1] != "/" ):
@@ -72,8 +75,14 @@ def index(directory_of_documents, dictionary_name, posting_name):
 		for line in current_doc:
 			line_tokens = nltk.word_tokenize(line)
 			# lowercase all tokens
-			for token in line_tokens:
-				token = token.lower()
+			num_tokens = len(line_tokens)
+			i = 0
+			while i < num_tokens:
+				# print "before-",token
+				line_tokens[i] = stemmer.stem(line_tokens[i])
+				line_tokens[i] = line_tokens[i].lower()
+				i+=1
+				# print "after -",token
 			doc_tokens.extend(line_tokens)
 		doc_tokens.sort()
 
