@@ -141,6 +141,14 @@ def get_tf_list(posting_list):
 		tf_list.append(tupple[1])
 	return tf_list
 
+def get_raw_tf(term, doc_id, posting_file, dictionary):
+	term_posting = get_posting(posting_file,term,dictionary)
+	for tupple in term_posting:
+		if doc_id == tupple[0]:
+			return tupple[1]
+	return 0
+
+
 def usage():
     print "usage: " + sys.argv[0]
 
@@ -178,3 +186,4 @@ print term_posting
 print "doc List:", get_doc_list(term_posting)
 print "tf List:", get_tf_list(term_posting)
 print "df:", get_df(dictionary, "woUlds")
+print "raw tf would DOC:10", get_raw_tf("would",'1', postings_file, dictionary)
