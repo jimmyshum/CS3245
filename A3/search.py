@@ -29,7 +29,21 @@ def search(dictionary_file,postings_file,input_file,output_file):
 		print queryListTF
 		print queryListN
 
+		dictionary = read_dictionary(dictionary_file)
 
+		checking_list = list( get_checking_doc_list(queryListInfo.keys(), dictionary, postings_file))
+		print "checking....",checking_list
+		itcinc_list= []
+		for doc in checking_list:
+			itc_list = get_doc_itc(queryListInfo.keys(), doc, postings_file, dictionary)
+			print "itc_list: ", itc_list
+			itcinc = product(itc_list , queryListN)
+			print "itcinnnnnn",itcinc
+			itcinc_list.append([itcinc,doc])
+
+		itcinc_list.sort()
+		print "ANSWER:" ,itcinc_list[:10]
+		return itcinc_list[-10:]
 		'''for i in range(0,len(tokens)):
 
 
@@ -86,7 +100,10 @@ def product(queryListN,docListN):
 		for i in range (0,len(queryListN)):
 			productList.append(queryListN[i]*docListN[i])
 
-	return productList
+	add_product = 0
+	for item in productList:
+		add_product += item
+	return add_product
 
 
 
@@ -117,7 +134,7 @@ def calTFIDF(resultList):
 		idf = math.log(N/df, 10)
 
 	return tf*idf
-
+"""
 
 def read_dictionary(dictionary_file):
 	dictionary = []
@@ -188,6 +205,7 @@ def get_df(dictionary, term):
 	for tup in dictionary:
 		if tup[0] == term:
 			return tup[1]
+	return 0
 
 def get_doc_list(posting_list):
 	doc_list = []
@@ -201,7 +219,10 @@ def get_tf_list(posting_list):
 		tf_list.append(tupple[1])
 	return tf_list
 <<<<<<< HEAD
+<<<<<<< HEAD
 """
+=======
+>>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
 
 def get_raw_tf(term, doc_id, posting_file, dictionary):
 	term_posting = get_posting(posting_file,term,dictionary)
@@ -223,7 +244,10 @@ def tokenizer(input_list):
 	return output_list
 
 def idf_from_df(df):
-	return math.log(total_doc_size/df,10)
+	if(df!=0):
+		return math.log(total_doc_size/df,10)
+	else:
+		return 0
 
 def tf_from_raw(raw):
 	if (raw != 0):
@@ -270,7 +294,21 @@ def get_doc_itc(term_list, doc_id, posting_file, dictionary):
 	# print norm_list
 	return norm_list
 
+<<<<<<< HEAD
 #>>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
+=======
+def get_checking_doc_list(queryListInfo, dictionary, postings_file):
+	checking_list = []
+	for query_token in queryListInfo:
+		token = tokenizer(query_token)
+		term_posting = get_posting(postings_file,token[0],dictionary)
+		checking_list = set_merge(checking_list , get_doc_list(term_posting))
+	return checking_list
+
+def set_merge(a,b):
+	return set(list(a) + list(b))	
+
+>>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
 def usage():
     print "usage: " + sys.argv[0]
 
@@ -302,7 +340,7 @@ search(dictionary_file,postings_file,input_file,output_file)
 # test()
 
 # Test get posting
-'''
+
 dictionary = read_dictionary(dictionary_file)
 term_posting = get_posting(postings_file,"woUlds",dictionary)
 print term_posting
@@ -310,13 +348,20 @@ print "doc List:", get_doc_list(term_posting)
 print "tf List:", get_tf_list(term_posting)
 print "df:", get_df(dictionary, "woUlds")
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+
+>>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
 print "raw tf would DOC:10", get_raw_tf("would",'1', postings_file, dictionary)
 
 sample_input = "would zone year"
 input_list= tokenizer(sample_input)
 print input_list
 get_doc_itc(input_list, '10', postings_file,dictionary)
+<<<<<<< HEAD
 >>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
 '''
+=======
+>>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
