@@ -17,10 +17,12 @@ def search(dictionary_file,postings_file,input_file,output_file):
 		tokens = nltk.word_tokenize(line)
 		from collections import Counter
 		queryListInfo = Counter(tokens)
+		queryListDict = dict(queryListInfo)
 		queryListTF = queryListInfo.values()
 		queryListTF = calTFWT(queryListTF)
 		queryListN = normalization(queryListTF)
 		print queryListInfo
+		print queryListDict
 		print queryListInfo.keys()
 		#print sorted(list(wordList.keys()))
 		print queryListInfo.values()
@@ -79,7 +81,7 @@ def normalization(qList):
 def product(queryListN,docListN):
 	if len(queryListN) - len(docListN) != 0:
 		return -1
-	else
+	else:
 		productList = []
 		for i in range (0,len(queryListN)):
 			productList.append(queryListN[i]*docListN[i])
@@ -200,7 +202,6 @@ def get_tf_list(posting_list):
 	return tf_list
 <<<<<<< HEAD
 """
-=======
 
 def get_raw_tf(term, doc_id, posting_file, dictionary):
 	term_posting = get_posting(posting_file,term,dictionary)
@@ -269,7 +270,7 @@ def get_doc_itc(term_list, doc_id, posting_file, dictionary):
 	# print norm_list
 	return norm_list
 
->>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
+#>>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
 def usage():
     print "usage: " + sys.argv[0]
 
@@ -309,7 +310,7 @@ print "doc List:", get_doc_list(term_posting)
 print "tf List:", get_tf_list(term_posting)
 print "df:", get_df(dictionary, "woUlds")
 <<<<<<< HEAD
-'''
+
 =======
 print "raw tf would DOC:10", get_raw_tf("would",'1', postings_file, dictionary)
 
@@ -318,3 +319,4 @@ input_list= tokenizer(sample_input)
 print input_list
 get_doc_itc(input_list, '10', postings_file,dictionary)
 >>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
+'''
