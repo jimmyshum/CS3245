@@ -76,6 +76,15 @@ def normalization(qList):
 		nQList.append(qList[i]/factor)
 	return nQList
 
+def product(queryListN,docListN):
+	if len(queryListN) - len(docListN) != 0:
+		return -1
+	else
+		productList = []
+		for i in range (0,len(queryListN)):
+			productList.append(queryListN[i]*docListN[i])
+
+	return productList
 
 
 
