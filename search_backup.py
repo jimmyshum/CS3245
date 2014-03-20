@@ -8,49 +8,95 @@ def search(dictionary_file,postings_file,input_file,output_file):
 	inFile = open(input_file,'r')
 	outFile = open(output_file,'w')
 	for line in inFile:
-		scoreList = []
+		stack = []
+		result = []
 		tokens = nltk.word_tokenize(line)
 		for i in range(0,len(tokens)):
-			word = tokens[i]
-			resultList = evaluateQuery(word,dictionary_file,postings_file)
-			tf_idf = calTFIDF(resultList)
-			scoreList.append(tf_idf)
+			s = tokens[i]
+			if s == "AND":
+				if stack:
+					if stack[len(stack)-1] == "AND":
+						result.append(stack.pop())
 
-		
-		####Test 
-		for i in range(0,len(scoreList)):
-			print scoreList[i] + " "
+				stack.append(s)
 
-		####
 
-		####
+			elif s == "OR":
+
+				if stack:
+					if stack[len(stack)-1] == "AND":
+						result.append(stack.pop())
+					if stack[len(stack)-1] == "OR":
+						result.append(stack.pop())
+
+				stack.append(s)
+				
+
+			elif s == "NOT":
+				stack.append(s)
+
+			elif s == "(":
+				stack.append(s)
+
+			elif s == ")":
+				s = stack.pop()
+				while s != "(":
+					result.append(s)
+					s = stack.pop()
+				
+
+			else:
+				result.append(s)
+				if stack:
+					if stack[len(stack)-1] == "NOT":
+						result.append(stack.pop())
+
+				
+
+		while len(stack) != 0:
+			result.append(stack.pop())
+
+		resultList = evaluateQuery(result,dictionary_file,postings_file)
+		resultInnerList = resultList[0]
 		for i in range(0, len(resultInnerList)-1):
 			outFile.write( resultInnerList[i] + " ")
 		outFile.write(resultInnerList[len(resultInnerList)-1]+"\n")
-		####
+
 	
 
-def evaluateQuery(word,dictionary_file,postings_file):
-	## term freq.[0] 
-	## doc. freq.[1] 
-	## N
-	resultList = get_posting(postings_file, list[i], read_dictionary(dictionary_file))
-	return resultList
+def evaluateQuery(list,dictionary_file,postings_file):
+	result = []
+	for i in range(0,len(list)):
+		if list[i] == "AND":
+			list1 = result.pop()
+			list2 = result.pop()
+			result.append(opAND(list1,list2))
 
-def calTFIDF(resultList):
-	tf = resultList[0]
-	df = resultList[1]
-	N = resultList[2]
+		elif list[i] == "OR":
+			list1 = result.pop()
+			list2 = result.pop()
+			result.append(opOR(list1,list2))
 
-	## temp 
-	if df == 0:
-		df = 1
-	##
 
-	if df != 0:
-		idf = math.log(N/df, 10)
+		elif list[i] == "NOT":
+			list1 = result.pop()
+			result.append(opNOT(getDocListLenList(),list1))
 
-	return tf*idf
+		else:
+			result.append(get_posting(postings_file, list[i], read_dictionary(dictionary_file)))
+	
+	return result
+
+
+def opAND(list1,list2):
+
+	return sorted(list(set(list1) & set(list2)))
+
+def opOR(list1,list2):
+	return sorted(list(set(list1) | set(list2)))
+
+def opNOT(list1,list2):
+	return sorted(list((set(list1) - set(list2))))
 
 
 def read_dictionary(dictionary_file):
