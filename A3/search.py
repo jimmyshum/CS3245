@@ -3,6 +3,8 @@ import nltk
 import sys
 import getopt
 import os
+from nltk.stem import *
+
 
 def search(dictionary_file,postings_file,input_file,output_file):
 	inFile = open(input_file,'r')
@@ -75,6 +77,11 @@ def find_index(term, list):
 	return -1
 
 def get_posting(postings_file, term, dictionary):
+	
+	term = term.lower()
+	stemmer =  PorterStemmer()
+	term = stemmer.stem(term)
+
 	post_file = open(postings_file, "r+")
 	# read posting and get line_offset for jumping
 	line_offset =[]
@@ -94,9 +101,13 @@ def get_posting(postings_file, term, dictionary):
 	target_line = post_file.readline()
 	target_line_postings = target_line.split(" ")
 	target_line_postings.remove("\n")
-	return target_line_postings
+	term_posting = []
+	for tupple in target_line_postings:
+		id_plus_freq = tupple.split(':')
+		term_posting.append([id_plus_freq[0], int(id_plus_freq[1])])
+	return term_posting 
 
-
+# problem dearch.py should not access directory of documents
 def getDocListLenList():
 	docList = []
 	path = "/Users/Jimmy/Documents/CS3245/reuters/training/"
@@ -105,6 +116,26 @@ def getDocListLenList():
 		docList.append(i)
 	return docList
 
+def get_df(dictionary, term):
+	term = term.lower()
+	stemmer =  PorterStemmer()
+	term = stemmer.stem(term)
+
+	for tup in dictionary:
+		if tup[0] == term:
+			return tup[1]
+
+def get_doc_list(posting_list):
+	doc_list = []
+	for tupple in posting_list:
+		doc_list.append(tupple[0])
+	return doc_list
+
+def get_tf_list(posting_list):
+	tf_list = [] 
+	for tupple in posting_list:
+		tf_list.append(tupple[1])
+	return tf_list
 
 def usage():
     print "usage: " + sys.argv[0]
@@ -132,6 +163,14 @@ if dictionary_file == None or postings_file == None or input_file == None or out
     usage()
     sys.exit(2)
 
-search(dictionary_file,postings_file,input_file,output_file)
-#print "resutl" , get_posting(postings_file, "February", read_dictionary(dictionary_file))
+# search(dictionary_file,postings_file,input_file,output_file)
+# print "resutl" , get_posting(postings_file, "February", read_dictionary(dictionary_file))
 # test()
+
+# Test get posting
+dictionary = read_dictionary(dictionary_file)
+term_posting = get_posting(postings_file,"woUlds",dictionary)
+print term_posting
+print "doc List:", get_doc_list(term_posting)
+print "tf List:", get_tf_list(term_posting)
+print "df:", get_df(dictionary, "woUlds")
