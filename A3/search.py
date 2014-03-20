@@ -228,14 +228,14 @@ def get_doc_itc(term_list, doc_id, posting_file, dictionary):
 		df = get_df(dictionary,term)
 		idf = idf_from_df(df)
 		idf_list.append(idf)
-	print idf_list
+	# print idf_list
 	# find 1 + log(tf)
 	tf_list = []
 	for term in term_list:
 		raw_tf = get_raw_tf(term, doc_id, posting_file, dictionary)
 		tf = tf_from_raw(raw_tf)
 		tf_list.append(raw_tf)
-	print tf_list
+	# print tf_list
 
 	i = 0
 	query_size = len(term_list)
@@ -244,20 +244,21 @@ def get_doc_itc(term_list, doc_id, posting_file, dictionary):
 		wt = tf_list[i] * idf_list[i]
 		wt_list.append(wt)
 		i+=1
-	print wt_list
+	# print wt_list
 
 	doc_length_sum= 0
 	for wt in wt_list:
 		doc_length_sum += wt*wt
 	doc_length = math.sqrt(doc_length_sum)
-	print doc_length
+	# print doc_length
 
 	norm_list = []
 	for wt in wt_list:
 		norm = wt/doc_length
 		norm_list.append(norm)
 
-	print norm_list
+	# print norm_list
+	return norm_list
 
 >>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
 def usage():
