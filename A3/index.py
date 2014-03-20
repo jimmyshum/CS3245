@@ -21,7 +21,7 @@ def read_dict(dictionary_name):
 	line_num = 0
 	dict_file = open(dictionary_name)
 	for line in dict_file:
-		word = nltk.word_tokenize(line)
+		word = line.split(" ")
 		word[1] = int(word[1])
 		dictionary.append(word)
 		line_num = line_num + 1
@@ -35,24 +35,39 @@ def write_dict(dictionary_name, dictionary):
 		dict_file.write(line)
 	dict_file.close()
 		
+def write_post(posting_name, posting):
+	post_file = open(posting_name, "w")
+	for term in posting:
+		line = ""
+		for item in term:
+			line = line + item[0] + ":" + str(item[1]) + " "
+		line = line + "\n"
+		post_file.write(line)
+
+	post_file.close()
 
 
 def get_doc_list():
-	if(os.path.isfile(directory_of_documents) == False) :
+	if(os.path.isdir(directory_of_documents) == False) :
 		print "directory_of_documents not exist, indexing fail"
 		exit()
 	dirs = os.listdir( directory_of_documents )
 	return dirs
 
 
-def index(directory_of_documents, dictionary_name, posting):
+def index(directory_of_documents, dictionary_name, posting_name):
 	
 	dictionary = []
-
+	posting = [] # 3d list of [term][doc][id/freq]
 	doc_list = get_doc_list()
 
 	for doc_file in doc_list:
-		current_doc = open(path + doc_file)
+		print "indexing: ",doc_file
+		if (directory_of_documents[-1] != "/" ):
+			full_path = directory_of_documents + "/"+ doc_file
+		else:
+			full_path = directory_of_documents + doc_file
+		current_doc = open(full_path)
 		doc_tokens = []
 		for line in current_doc:
 			line_tokens = nltk.word_tokenize(line)
@@ -76,6 +91,7 @@ def index(directory_of_documents, dictionary_name, posting):
 				prv_token = one_token
 			else:
 				freq.append([prv_token,count])
+				count = 1
 				prv_token = one_token
 		freq.append([prv_token,count]) # for the last token 
 		
@@ -86,62 +102,19 @@ def index(directory_of_documents, dictionary_name, posting):
 			if (position == -1):
 				# add item to list dictionary, sort and get new line number
 				doc_count = 1
-				dict_term = (term[0],doc_count)
+				dict_term = [term[0],doc_count]
 				dictionary.append(dict_term)
 				dictionary.sort()
 				dict_posit = find_index(term, dictionary)
 
+				if (dict_posit > len(posting)):
+					dict_posit = len(posting) -1
 				# write to dictionary file
-				write_dict(dictionary_name,dictionary)
+				# write_dict(dictionary_name,dictionary)
 
-				# add the line on the posting list 
-				post_file = open(posting, "r+")
-
-				# read posting and get line_offset for jumping
-				line_offset =[]
-				offset =0
-				for line in post_file:    
-					line_offset.append(offset)    
-					offset += len(line)
-				post_file.seek(0)
-
-				# Now, to skip to line n (with the first line being line 0, just dofile.seek(line_offset[n])
-				"""
-				if (dict_posit < len(line_offset) ):
-					# case add line to line n of the file
-					post_file.seek(line_offset[dict_posit])
-					data = doc_file + " \n"
-					post_file.write(data)
-					post_file.close()
-				else: 
-					# case add to the end of file
-					post_file.seek(0,2)
-					data = doc_file + " \n"
-					post_file.write(data)
-					post_file.close()
-				"""
-				data = doc_file + " \n"
-
-				post_file.seek(0,0)
-				tmp_file = open("tmp","w")
-				line_count = 0
-				for post_line in post_file:
-					if line_count == dict_posit:
-						tmp_file.write(data)
-						tmp_file.write(post_line)
-					else:
-						tmp_file.write(post_line)
-					line_count = line_count + 1
-
-				if line_count < dict_posit:
-					tmp_file.write(data)
-
-				post_file.close()
-				tmp_file.close()
-
-				# replace tmp file to posting file
-				os.remove(posting)
-				os.rename("tmp",posting)
+				# add the term on the posting list
+				posting_item = [doc_file ,term[1]]	
+				posting.insert(dict_posit, [posting_item])
 
 			else:
 				# case term's positing already exist in dict 
@@ -149,59 +122,16 @@ def index(directory_of_documents, dictionary_name, posting):
 				# edit the freq of dictionary list
 				for dictionary_entry in dictionary:
 					if(dictionary_entry[0] == term[0]):
-						dictionary_entry[1] = dictionary_entry[1] + term[1]
-				# write the change to dict file
-				write_dict(dictionary_name,dictionary)
-
-				# edit the posting file
-				post_file = open(posting, "r+")
-				# read posting and get line_offset for jumping
-				line_offset =[]
-				offset =0
-				for line in post_file:    
-					line_offset.append(offset)    
-					offset += len(line)
-				post_file.seek(0)
-
-				# read target posting list from file
-				dict_posit = find_index(term, dictionary)
-				if (dict_posit < len(line_offset) ):
-					post_file.seek(line_offset[dict_posit])
-				else:
-					post_file.seek(0,2)
+						dictionary_entry[1] = dictionary_entry[1] + 1
 				
-				target_line = post_file.readline()
-				target_line_postings = target_line.split(" ")
-				# add the new DocID and sort
-				if not(doc_file in target_line_postings):
-					target_line_postings.append(doc_file)
-				target_line_postings.sort()
-				data  = ""
-				for doc_id in target_line_postings:
-					if doc_id != '\n':					
-					 	data = data + doc_id + " "
-				data = data + "\n"
-
-				# write each line to another file  )
-				post_file.seek(0,0)
-				tmp_file = open("tmp","w")
-				line_count = 0
-				for post_line in post_file:
-					if line_count == dict_posit:
-						tmp_file.write(data)
-					else:
-						tmp_file.write(post_line)
-					line_count = line_count + 1
-
-				post_file.close()
-				tmp_file.close()
-
-				# replace tmp file to posting file
-				os.remove(posting)
-				os.rename("tmp",posting)
-
+				dict_posit = find_index(term,dictionary)
+				posting_item = [doc_file ,term[1]]
+				posting[dict_posit].append(posting_item)
+				posting[dict_posit].sort()
+				
 		current_doc.close()
-	# print dictionary
+	write_dict(dictionary_name, dictionary)
+	write_post(posting_name, posting)
 
 
 def find_index(term, list):
