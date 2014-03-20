@@ -1,0 +1,3 @@
+Test with small dictionary and small posting files
+python search.py -d d2.txt -p p2.txt -q a -o o
+
