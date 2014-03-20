@@ -1,0 +1,4 @@
+auto 5000
+best 50000
+car 10000
+insurance 1000

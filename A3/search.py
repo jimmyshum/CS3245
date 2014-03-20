@@ -6,6 +6,8 @@ import os
 import math
 from nltk.stem import *
 
+# global constant N total_doc_size
+total_doc_size = 7769.0
 
 def search(dictionary_file,postings_file,input_file,output_file):
 	inFile = open(input_file,'r')
@@ -187,7 +189,77 @@ def get_tf_list(posting_list):
 	for tupple in posting_list:
 		tf_list.append(tupple[1])
 	return tf_list
+<<<<<<< HEAD
 """
+=======
+
+def get_raw_tf(term, doc_id, posting_file, dictionary):
+	term_posting = get_posting(posting_file,term,dictionary)
+	for tupple in term_posting:
+		if doc_id == tupple[0]:
+			return tupple[1]
+	return 0
+
+def tokenizer(input_list):
+	
+	token_list = nltk.word_tokenize(input_list)
+	stemmer = PorterStemmer()
+	
+	output_list = []
+	for token in token_list:
+		token = token.lower()
+		term = stemmer.stem(token)
+		output_list.append(term)
+	return output_list
+
+def idf_from_df(df):
+	return math.log(total_doc_size/df,10)
+
+def tf_from_raw(raw):
+	if (raw != 0):
+		return 1 + math.log(raw,10)
+	else:
+		return 0
+
+def get_doc_itc(term_list, doc_id, posting_file, dictionary):
+	# find idf
+	idf_list = []
+	for term in term_list:
+		df = get_df(dictionary,term)
+		idf = idf_from_df(df)
+		idf_list.append(idf)
+	print idf_list
+	# find 1 + log(tf)
+	tf_list = []
+	for term in term_list:
+		raw_tf = get_raw_tf(term, doc_id, posting_file, dictionary)
+		tf = tf_from_raw(raw_tf)
+		tf_list.append(raw_tf)
+	print tf_list
+
+	i = 0
+	query_size = len(term_list)
+	wt_list = []
+	while i< query_size:
+		wt = tf_list[i] * idf_list[i]
+		wt_list.append(wt)
+		i+=1
+	print wt_list
+
+	doc_length_sum= 0
+	for wt in wt_list:
+		doc_length_sum += wt*wt
+	doc_length = math.sqrt(doc_length_sum)
+	print doc_length
+
+	norm_list = []
+	for wt in wt_list:
+		norm = wt/doc_length
+		norm_list.append(norm)
+
+	print norm_list
+
+>>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
 def usage():
     print "usage: " + sys.argv[0]
 
@@ -226,4 +298,13 @@ print term_posting
 print "doc List:", get_doc_list(term_posting)
 print "tf List:", get_tf_list(term_posting)
 print "df:", get_df(dictionary, "woUlds")
+<<<<<<< HEAD
 '''
+=======
+print "raw tf would DOC:10", get_raw_tf("would",'1', postings_file, dictionary)
+
+sample_input = "would zone year"
+input_list= tokenizer(sample_input)
+print input_list
+get_doc_itc(input_list, '10', postings_file,dictionary)
+>>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
