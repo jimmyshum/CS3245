@@ -8,16 +8,20 @@ def search(dictionary_file,postings_file,input_file,output_file):
 	inFile = open(input_file,'r')
 	outFile = open(output_file,'w')
 	for line in inFile:
-		scoreList = []
+		wordScoreList = []
 		tokens = nltk.word_tokenize(line)
 		for i in range(0,len(tokens)):
 			word = tokens[i]
 			resultList = evaluateQuery(word,dictionary_file,postings_file)
 			tf_idf = calTFIDF(resultList)
-			scoreList.append(tf_idf)
+			wordScore = []
+			wordScore.append(word)
+			wordScore.append(tf_idf)
+			wordScoreList.append(wordScore)
 
 		
 		####Test 
+		sorted(list(scoreList))
 		for i in range(0,len(scoreList)):
 			print scoreList[i] + " "
 
@@ -41,7 +45,7 @@ def calTFIDF(resultList):
 	tf = resultList[0]
 	df = resultList[1]
 	N = resultList[2]
-
+	tf = 1 + math.log(tf,10)
 	## temp 
 	if df == 0:
 		df = 1
