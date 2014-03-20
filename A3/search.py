@@ -3,6 +3,7 @@ import nltk
 import sys
 import getopt
 import os
+import math
 from nltk.stem import *
 
 
@@ -10,9 +11,25 @@ def search(dictionary_file,postings_file,input_file,output_file):
 	inFile = open(input_file,'r')
 	outFile = open(output_file,'w')
 	for line in inFile:
-		wordScoreList = []
+		#wordScoreList = []
 		tokens = nltk.word_tokenize(line)
-		for i in range(0,len(tokens)):
+		from collections import Counter
+		queryListInfo = Counter(tokens)
+		queryListTF = queryListInfo.values()
+		queryListTF = calTFWT(queryListTF)
+		queryListN = normalization(queryListTF)
+		print queryListInfo
+		print queryListInfo.keys()
+		#print sorted(list(wordList.keys()))
+		print queryListInfo.values()
+		print queryListTF
+		print queryListN
+
+
+		'''for i in range(0,len(tokens)):
+
+
+
 			word = tokens[i]
 			resultList = evaluateQuery(word,dictionary_file,postings_file)
 			tf_idf = calTFIDF(resultList)
@@ -34,14 +51,44 @@ def search(dictionary_file,postings_file,input_file,output_file):
 			outFile.write( resultInnerList[i] + " ")
 		outFile.write(resultInnerList[len(resultInnerList)-1]+"\n")
 		####
+		'''
 	
 
+def calTFWT(qList):
+	qListWT = []
+	for i in range (0,len(qList)):
+		tf = qList[i]
+		tfwt = 1 + math.log(tf,10)
+		qListWT.append(tfwt)
+	return qListWT
+	
+def normalization(qList):
+	length = len(qList)
+	sqSum = 0
+	nQList = []
+	for i in range (0,len(qList)):
+		sqSum = sqSum + qList[i]*qList[i]
+	factor = math.sqrt(sqSum)
+
+	for i in range (0,len(qList)):
+		nQList.append(qList[i]/factor)
+	return nQList
+
+
+
+
+
+
+
+
+"""
 def evaluateQuery(word,dictionary_file,postings_file):
 	## term freq.[0] 
 	## doc. freq.[1] 
 	## N
 	resultList = get_posting(postings_file, list[i], read_dictionary(dictionary_file))
 	return resultList
+
 
 def calTFIDF(resultList):
 	tf = resultList[0]
@@ -140,7 +187,7 @@ def get_tf_list(posting_list):
 	for tupple in posting_list:
 		tf_list.append(tupple[1])
 	return tf_list
-
+"""
 def usage():
     print "usage: " + sys.argv[0]
 
@@ -167,14 +214,16 @@ if dictionary_file == None or postings_file == None or input_file == None or out
     usage()
     sys.exit(2)
 
-# search(dictionary_file,postings_file,input_file,output_file)
+search(dictionary_file,postings_file,input_file,output_file)
 # print "resutl" , get_posting(postings_file, "February", read_dictionary(dictionary_file))
 # test()
 
 # Test get posting
+'''
 dictionary = read_dictionary(dictionary_file)
 term_posting = get_posting(postings_file,"woUlds",dictionary)
 print term_posting
 print "doc List:", get_doc_list(term_posting)
 print "tf List:", get_tf_list(term_posting)
 print "df:", get_df(dictionary, "woUlds")
+'''
