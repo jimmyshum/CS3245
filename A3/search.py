@@ -17,10 +17,12 @@ def search(dictionary_file,postings_file,input_file,output_file):
 		tokens = nltk.word_tokenize(line)
 		from collections import Counter
 		queryListInfo = Counter(tokens)
+		queryListDict = dict(queryListInfo)
 		queryListTF = queryListInfo.values()
 		queryListTF = calTFWT(queryListTF)
 		queryListN = normalization(queryListTF)
 		print queryListInfo
+		print queryListDict
 		print queryListInfo.keys()
 		#print sorted(list(wordList.keys()))
 		print queryListInfo.values()
@@ -34,14 +36,24 @@ def search(dictionary_file,postings_file,input_file,output_file):
 		itcinc_list= []
 		for doc in checking_list:
 			itc_list = get_doc_itc(queryListInfo.keys(), doc, postings_file, dictionary)
-			print "itc_list: ", itc_list
+			# print "itc_list: ", itc_list
 			itcinc = product(itc_list , queryListN)
-			print "itcinnnnnn",itcinc
+			# print "itcinnnnnn",itcinc
 			itcinc_list.append([itcinc,doc])
 
 		itcinc_list.sort()
-		print "ANSWER:" ,itcinc_list[:10]
-		return itcinc_list[-10:]
+		result = itcinc_list[::-1]
+		print "ANSWER:" , result
+		of = open(output_file, "w")
+		for i in range(10):
+			if (i >= len(result)):
+				break
+			of.write(result[i][1] + " ")
+		
+		of.write("\n")
+		of.close()
+		return result
+		
 		'''for i in range(0,len(tokens)):
 
 
@@ -187,6 +199,7 @@ def get_posting(postings_file, term, dictionary):
 	return term_posting 
 
 # problem dearch.py should not access directory of documents
+"""
 def getDocListLenList():
 	docList = []
 	path = "/Users/Jimmy/Documents/CS3245/reuters/training/"
@@ -194,7 +207,7 @@ def getDocListLenList():
 	for i in range (1,len(dirs)+1):
 		docList.append(i)
 	return docList
-
+"""
 def get_df(dictionary, term):
 	term = term.lower()
 	stemmer =  PorterStemmer()
@@ -216,6 +229,11 @@ def get_tf_list(posting_list):
 	for tupple in posting_list:
 		tf_list.append(tupple[1])
 	return tf_list
+<<<<<<< HEAD
+<<<<<<< HEAD
+"""
+=======
+>>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
 
 def get_raw_tf(term, doc_id, posting_file, dictionary):
 	term_posting = get_posting(posting_file,term,dictionary)
@@ -255,7 +273,7 @@ def get_doc_itc(term_list, doc_id, posting_file, dictionary):
 		df = get_df(dictionary,term)
 		idf = idf_from_df(df)
 		idf_list.append(idf)
-	# print idf_list
+	# print "idf_list", idf_list
 	# find 1 + log(tf)
 	tf_list = []
 	for term in term_list:
@@ -287,6 +305,9 @@ def get_doc_itc(term_list, doc_id, posting_file, dictionary):
 	# print norm_list
 	return norm_list
 
+<<<<<<< HEAD
+#>>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
+=======
 def get_checking_doc_list(queryListInfo, dictionary, postings_file):
 	checking_list = []
 	for query_token in queryListInfo:
@@ -298,6 +319,7 @@ def get_checking_doc_list(queryListInfo, dictionary, postings_file):
 def set_merge(a,b):
 	return set(list(a) + list(b))	
 
+>>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
 def usage():
     print "usage: " + sys.argv[0]
 
@@ -329,17 +351,32 @@ search(dictionary_file,postings_file,input_file,output_file)
 # test()
 
 # Test get posting
-
+"""
 dictionary = read_dictionary(dictionary_file)
 term_posting = get_posting(postings_file,"woUlds",dictionary)
 print term_posting
 print "doc List:", get_doc_list(term_posting)
 print "tf List:", get_tf_list(term_posting)
 print "df:", get_df(dictionary, "woUlds")
+<<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+=======
+
+>>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
 print "raw tf would DOC:10", get_raw_tf("would",'1', postings_file, dictionary)
 
 sample_input = "would zone year"
 input_list= tokenizer(sample_input)
 print input_list
 get_doc_itc(input_list, '10', postings_file,dictionary)
+<<<<<<< HEAD
+"""
+=======
+<<<<<<< HEAD
+>>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
+'''
+=======
+>>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
+>>>>>>> FETCH_HEAD
