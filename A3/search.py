@@ -229,11 +229,7 @@ def get_tf_list(posting_list):
 	for tupple in posting_list:
 		tf_list.append(tupple[1])
 	return tf_list
-<<<<<<< HEAD
-<<<<<<< HEAD
-"""
-=======
->>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
+
 
 def get_raw_tf(term, doc_id, posting_file, dictionary):
 	term_posting = get_posting(posting_file,term,dictionary)
@@ -305,9 +301,7 @@ def get_doc_itc(term_list, doc_id, posting_file, dictionary):
 	# print norm_list
 	return norm_list
 
-<<<<<<< HEAD
-#>>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
-=======
+
 def get_checking_doc_list(queryListInfo, dictionary, postings_file):
 	checking_list = []
 	for query_token in queryListInfo:
@@ -319,7 +313,6 @@ def get_checking_doc_list(queryListInfo, dictionary, postings_file):
 def set_merge(a,b):
 	return set(list(a) + list(b))	
 
->>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
 def usage():
     print "usage: " + sys.argv[0]
 
@@ -358,13 +351,6 @@ print term_posting
 print "doc List:", get_doc_list(term_posting)
 print "tf List:", get_tf_list(term_posting)
 print "df:", get_df(dictionary, "woUlds")
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-=======
-
->>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
 print "raw tf would DOC:10", get_raw_tf("would",'1', postings_file, dictionary)
 
 sample_input = "would zone year"
@@ -373,10 +359,3 @@ print input_list
 get_doc_itc(input_list, '10', postings_file,dictionary)
 <<<<<<< HEAD
 """
-=======
-<<<<<<< HEAD
->>>>>>> 975dd2de6c0aaf208cf14986c2ba45a4e0acfdec
-'''
-=======
->>>>>>> cca31a3ed7468167f979f3ef6325903c5cfea7b2
->>>>>>> FETCH_HEAD
