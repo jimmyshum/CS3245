@@ -295,7 +295,10 @@ def get_doc_itc(term_list, doc_id, posting_file, dictionary):
 
 	norm_list = []
 	for wt in wt_list:
-		norm = wt/doc_length
+		if doc_length == 0:
+			norm = 1
+		else:
+			norm = wt/doc_length
 		norm_list.append(norm)
 
 	# print norm_list
