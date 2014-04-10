@@ -84,6 +84,8 @@ def index(directory_of_documents, dictionary_name, posting_name):
 		title = tree.xpath('//str[@name="Title"]/text()')
 		desc = tree.xpath('//str[@name="Abstract"]/text()')
 
+		if len(title) < 1 :
+			continue
 				
 		title_tokens = nltk.word_tokenize(title[0])
 		# lowercase all tokens
