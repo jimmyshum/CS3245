@@ -20,9 +20,13 @@ def retrieveXML():
 	
 	#for i in range (0,len(elements)):
 	#	print etree.tostring(elements[i])
+	titleTokens = nltk.word_tokenize(title[0])
+	descTokens = nltk.word_tokenize(desc[0])
 
-	print title
-	print desc
+	print titleTokens
+	print descTokens
+	#print title[0]
+	#print desc[0]
 	#print etree.tostring(title[0])
 	#print etree.tostring(desc[0])
 
