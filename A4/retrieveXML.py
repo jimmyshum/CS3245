@@ -3,39 +3,32 @@ import nltk
 import sys
 import getopt
 import os
+#import xml.dom
 import math
-from nltk.stem import *
-
+import urllib
+import StringIO
+import lxml
+#from xml.dom.minidom import parse,parseString
+from lxml import etree
 def retrieveXML():
+	fopen = urllib.urlopen('cs3245-hw4/q1.xml')
+	xml = fopen.read()
+	parser = etree.XMLParser()
+	tree = etree.parse(StringIO.StringIO(xml),parser)
+	title = tree.xpath('//title/text()')
+	desc = tree.xpath('//description/text()')
+	
+	#for i in range (0,len(elements)):
+	#	print etree.tostring(elements[i])
 
+	print title
+	print desc
+	#print etree.tostring(title[0])
+	#print etree.tostring(desc[0])
 
 
 def usage():
     print "usage: " + sys.argv[0]
 
-"""dictionary_file = postings_file = input_file = output_file = None
-
-try:
-    opts, args = getopt.getopt(sys.argv[1:], 'd:p:q:o:')
-except getopt.GetoptError, err:
-    usage()
-    sys.exit(2)
-for o, a in opts:
-    if o == '-d':
-        dictionary_file = a
-    elif o == '-p':
-        postings_file = a
-    elif o == '-q':
-        input_file = a
-    elif o == '-o':
-    	output_file = a 
-    else:
-        assert False, "unhandled option"
-
-if dictionary_file == None or postings_file == None or input_file == None or output_file == None:
-    usage()
-    sys.exit(2)
-
-"""
 retrieveXML();
 #search(dictionary_file,postings_file,input_file,output_file)
