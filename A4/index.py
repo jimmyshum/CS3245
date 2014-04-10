@@ -4,6 +4,12 @@ import nltk
 import getopt
 import os 
 from nltk.stem import *
+import math
+import urllib
+import StringIO
+import lxml
+from lxml import etree
+import re
 
 
 """
@@ -70,28 +76,36 @@ def index(directory_of_documents, dictionary_name, posting_name):
 			full_path = directory_of_documents + "/"+ doc_file
 		else:
 			full_path = directory_of_documents + doc_file
-		current_doc = open(full_path)
-		doc_tokens = []
-		for line in current_doc:
-			line_tokens = nltk.word_tokenize(line)
-			# lowercase all tokens
-			num_tokens = len(line_tokens)
-			i = 0
-			while i < num_tokens:
-				# print "before-",token
-				line_tokens[i] = stemmer.stem(line_tokens[i])
-				line_tokens[i] = line_tokens[i].lower()
-				i+=1
-				# print "after -",token
-			doc_tokens.extend(line_tokens)
-		doc_tokens.sort()
+		#open and read XML file
+		# fopen = urllib.urlopen(full_path)
+		# xml = fopen.read()
+		# parser = etree.XMLParser()
+		tree = etree.parse(full_path)
+		title = tree.xpath('//str[@name="Title"]/text()')
+		desc = tree.xpath('//str[@name="Abstract"]/text()')
+
+				
+		title_tokens = nltk.word_tokenize(title[0])
+		# lowercase all tokens
+		num_tokens = len(title_tokens)
+		i = 0
+		while i < num_tokens:
+			# print "before-",token
+			title_tokens[i] = stemmer.stem(title_tokens[i])
+			title_tokens[i] = title_tokens[i].lower()
+			i+=1
+			# print "after -",token
+		title_tokens.sort()
+		print "title: ", title_tokens
+
+
 
 		# find replicate and count the freq, store into 2D list 
 		freq = []
 		count = 1
 		prv_token = ""
 		one_token = ""
-		for one_token in doc_tokens:
+		for one_token in title_tokens:
 			if (prv_token == ""): # case first token, comparing with ""
 				prv_token = one_token
 				continue
@@ -137,8 +151,82 @@ def index(directory_of_documents, dictionary_name, posting_name):
 				posting_item = [doc_file ,term[1]]
 				posting[dict_posit].append(posting_item)
 				posting[dict_posit].sort()
+
+		# same operation for token in description
+		if len(desc) < 1 :
+			continue
+		# remove the chinese char after '|'
+		desc_without_chinese = desc[0].split('|')
+
+
+		print "desc str: ", desc[0]
+		desc_tokens = nltk.word_tokenize(desc_without_chinese[0])
+		# lowercase all tokens
+		num_tokens = len(desc_tokens)
+		i = 0
+		while i < num_tokens:
+			# print "before-",token
+			desc_tokens[i] = stemmer.stem(desc_tokens[i])
+			desc_tokens[i] = desc_tokens[i].lower()
+			i+=1
+			# print "after -",token
+		desc_tokens.sort()
+		print "desc: ", desc_tokens
+
+
+
+		# find replicate and count the freq, store into 2D list 
+		freq = []
+		count = 1
+		prv_token = ""
+		one_token = ""
+		for one_token in desc_tokens:
+			if (prv_token == ""): # case first token, comparing with ""
+				prv_token = one_token
+				continue
+			if (one_token == prv_token):
+				count = count + 1
+				prv_token = one_token
+			else:
+				freq.append([prv_token,count])
+				count = 1
+				prv_token = one_token
+		freq.append([prv_token,count]) # for the last token 
+		
+		# insert into dictionary and posting
+		for term in freq:
+			position = find_index(term, dictionary)
+			# case term not in dictionary (new term)
+			if (position == -1):
+				# add item to list dictionary, sort and get new line number
+				doc_count = 1
+				dict_term = [term[0],doc_count]
+				dictionary.append(dict_term)
+				dictionary.sort()
+				dict_posit = find_index(term, dictionary)
+
+				if (dict_posit > len(posting)):
+					dict_posit = len(posting) -1
+				# write to dictionary file
+				# write_dict(dictionary_name,dictionary)
+
+				# add the term on the posting list
+				posting_item = [doc_file ,term[1]]	
+				posting.insert(dict_posit, [posting_item])
+
+			else:
+				# case term's positing already exist in dict 
+
+				# edit the freq of dictionary list
+				for dictionary_entry in dictionary:
+					if(dictionary_entry[0] == term[0]):
+						dictionary_entry[1] = dictionary_entry[1] + 1
 				
-		current_doc.close()
+				dict_posit = find_index(term,dictionary)
+				posting_item = [doc_file ,term[1]]
+				posting[dict_posit].append(posting_item)
+				posting[dict_posit].sort()		
+		
 	write_dict(dictionary_name, dictionary)
 	write_post(posting_name, posting)
 
