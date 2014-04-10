@@ -1,0 +1,18 @@
+Q1:
+1. query and store the position of occurrences for each words into the list1
+2. if the list is empty, finish query.Otherwise, continue.
+3. perform the query by the VSM model,and stored the result into another list2
+4. update the list1 by list2, the elements in list2 not in list1 will be removed.
+5. the final updated list is the result.
+
+
+Q2: 
+As longer documents have more different terms, the term frequency will become higher and greater. However, the processing time for the longer document is much higher than the shorter document. 
+Hence, the normalization may not sufficient as there is a independency between the normalization and the length of documents. 
+The Inc.Itc scheme is sufficient for retrieving documents,since they are not very long and the length of the documents are similar.
+
+
+Q3:
+Since the metadata of the Reuters collection is not uniform, the parametric indices is not really useful.
+Zone is useful as the document can be differentiate to different separate zones by the title of each document. 
+
