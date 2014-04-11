@@ -19,23 +19,6 @@ Dictionary will contain all terms from documents
 Posting list will contain the list of DocID for a particular term
 """
 
-# for testing only
-# path = "/Users/dennisli/Desktop/CS3245A2/A3/" 
-
-
-
-def read_dict(dictionary_name):
-	dictionary = []
-	line_num = 0
-	dict_file = open(dictionary_name)
-	for line in dict_file:
-		word = line.split(" ")
-		word[1] = int(word[1])
-		dictionary.append(word)
-		line_num = line_num + 1
-	dict_file.close()
-	return dictionary
-
 # write dictioanry list from memory to file
 def write_dict(dictionary_name, dictionary):
 	dict_file = open(dictionary_name, "w")
