@@ -39,7 +39,7 @@ def read_dict(dictionary_name):
 def write_dict(dictionary_name, dictionary):
 	dict_file = open(dictionary_name, "w")
 	for term in dictionary:
-		line = term[0] + " " + str(term[1]) + "\n"
+		line = term[0].encode('ascii','ignore') + " " + str(term[1]) + "\n"
 		dict_file.write(line)
 	dict_file.close()
 		
@@ -98,7 +98,7 @@ def index(directory_of_documents, dictionary_name, posting_name):
 			i+=1
 			# print "after -",token
 		title_tokens.sort()
-		print "title: ", title_tokens
+		# print "title: ", title_tokens
 
 
 
@@ -161,7 +161,7 @@ def index(directory_of_documents, dictionary_name, posting_name):
 		desc_without_chinese = desc[0].split('|')
 
 
-		print "desc str: ", desc[0]
+		# print "desc str: ", desc[0]
 		desc_tokens = nltk.word_tokenize(desc_without_chinese[0])
 		# lowercase all tokens
 		num_tokens = len(desc_tokens)
@@ -173,7 +173,7 @@ def index(directory_of_documents, dictionary_name, posting_name):
 			i+=1
 			# print "after -",token
 		desc_tokens.sort()
-		print "desc: ", desc_tokens
+		# print "desc: ", desc_tokens
 
 
 
