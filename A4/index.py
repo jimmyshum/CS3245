@@ -79,9 +79,6 @@ def index(directory_of_documents, dictionary_name, posting_name):
 		else:
 			full_path = directory_of_documents + doc_file
 		#open and read XML file
-		# fopen = urllib.urlopen(full_path)
-		# xml = fopen.read()
-		# parser = etree.XMLParser()
 		tree = etree.parse(full_path)
 		title = tree.xpath('//str[@name="Title"]/text()')
 		desc = tree.xpath('//str[@name="Abstract"]/text()')
@@ -94,15 +91,15 @@ def index(directory_of_documents, dictionary_name, posting_name):
 		num_tokens = len(title_tokens)
 		i = 0
 		while i < num_tokens:
-			# print "before-",token
 			title_tokens[i] = stemmer.stem(title_tokens[i])
 			title_tokens[i] = title_tokens[i].lower()
 			i+=1
-			# print "after -",token
+			
 		title_tokens.sort()
-		# print "title: ", title_tokens
-
-		title_bonus = 3
+		
+		# terms frequency of tokens in title with have bouns. 
+		# This allow files having the keyword in title have a higher rank
+		title_bonus = 10
 
 		# find replicate and count the freq, store into 2D list 
 		freq = []
@@ -156,26 +153,25 @@ def index(directory_of_documents, dictionary_name, posting_name):
 				posting[dict_posit].append(posting_item)
 				posting[dict_posit].sort()
 
-		# same operation for token in description
+		
+		# repeat same operation as token in title for token in description
 		if len(desc) < 1 :
 			continue
-		# remove the chinese char after '|'
+		# remove the chinese char after '|' (those chinese charactors)
 		desc_without_chinese = desc[0].split('|')
 
 
-		# print "desc str: ", desc[0]
+		
 		desc_tokens = nltk.word_tokenize(desc_without_chinese[0])
 		# lowercase all tokens
 		num_tokens = len(desc_tokens)
 		i = 0
 		while i < num_tokens:
-			# print "before-",token
 			desc_tokens[i] = stemmer.stem(desc_tokens[i])
 			desc_tokens[i] = desc_tokens[i].lower()
 			i+=1
-			# print "after -",token
 		desc_tokens.sort()
-		# print "desc: ", desc_tokens
+		
 
 
 
