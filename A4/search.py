@@ -37,7 +37,7 @@ def search(dictionary_file,postings_file,input_file,output_file):
 		itcinc_list.sort()
 		result = itcinc_list[::-1]
 		print "ANSWER:" , result
-		output_size = len(result)/10
+		output_size = len(result) 
 		for i in range(output_size):
 			if (i >= len(result)):
 				break
