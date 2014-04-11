@@ -12,6 +12,7 @@ import lxml
 from lxml import etree
 def retrieveXML():
 	fopen = urllib.urlopen('cs3245-hw4/q1.xml')
+
 	xml = fopen.read()
 	parser = etree.XMLParser()
 	tree = etree.parse(StringIO.StringIO(xml),parser)
@@ -32,7 +33,7 @@ def retrieveXML():
 
 def retrievePatentXML():
 	fopen = urllib.urlopen('patsnap-corpus/EP0115517A1.xml')
-	xml = fopen.read()
+	xml = fopen.read().encode('utf-8')
 	parser = etree.XMLParser()
 	tree = etree.parse(StringIO.StringIO(xml),parser)
 	title = tree.xpath('//str[@name="Title"]/text()')
@@ -40,6 +41,8 @@ def retrievePatentXML():
 	
 	#for i in range (0,len(elements)):
 	#	print etree.tostring(elements[i])
+
+	print desc;
 	titleTokens = nltk.word_tokenize(title[0])
 	descTokens = nltk.word_tokenize(desc[0])
 
