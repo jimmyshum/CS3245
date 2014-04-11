@@ -36,13 +36,15 @@ def read_dict(dictionary_name):
 	dict_file.close()
 	return dictionary
 
+# write dictioanry list from memory to file
 def write_dict(dictionary_name, dictionary):
 	dict_file = open(dictionary_name, "w")
 	for term in dictionary:
 		line = term[0].encode('ascii','ignore') + " " + str(term[1]) + "\n"
 		dict_file.write(line)
 	dict_file.close()
-		
+
+# write posting from memory to file		
 def write_post(posting_name, posting):
 	post_file = open(posting_name, "w")
 	for term in posting:

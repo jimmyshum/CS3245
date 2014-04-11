@@ -5,48 +5,54 @@ import getopt
 import os
 import math
 from nltk.stem import *
+from lxml import etree
+
 
 # global constant N total_doc_size
-total_doc_size = 7769.0
+total_doc_size = 2244.0
 output_size = 100
 
 def search(dictionary_file,postings_file,input_file,output_file):
-	inFile = open(input_file,'r')
+	# inFile = open(input_file,'r')
+	tree = etree.parse(input_file)
+	title = tree.xpath('//title/text()')
+
 	outFile = open(output_file,'w')
-	for line in inFile:
-		tokens = nltk.word_tokenize(line)
-		from collections import Counter
-		queryListInfo = Counter(tokens)
-		queryListDict = dict(queryListInfo)
-		queryListTF = queryListInfo.values()
-		queryListTF = calTFWT(queryListTF)
-		queryListN = normalization(queryListTF)
+	
+	#for line in inFile:
+	tokens = nltk.word_tokenize(title[0])
+	from collections import Counter
+	queryListInfo = Counter(tokens)
+	queryListDict = dict(queryListInfo)
+	queryListTF = queryListInfo.values()
+	queryListTF = calTFWT(queryListTF)
+	queryListN = normalization(queryListTF)
 
-		dictionary = read_dictionary(dictionary_file)
+	dictionary = read_dictionary(dictionary_file)
 
-		checking_list = list( get_checking_doc_list(queryListInfo.keys(), dictionary, postings_file))
-		print "checking....",checking_list
-		itcinc_list= []
-		for doc in checking_list:
-			itc_list = get_doc_itc(queryListInfo.keys(), doc, postings_file, dictionary)
-			# print "itc_list: ", itc_list
-			itcinc = product(itc_list , queryListN)
-			# print "itcinnnnnn",itcinc
-			itcinc_list.append([itcinc,doc])
+	checking_list = list( get_checking_doc_list(queryListInfo.keys(), dictionary, postings_file))
+	print "checking....",checking_list
+	itcinc_list= []
+	for doc in checking_list:
+		itc_list = get_doc_itc(queryListInfo.keys(), doc, postings_file, dictionary)
+		# print "itc_list: ", itc_list
+		itcinc = product(itc_list , queryListN)
+		# print "itcinnnnnn",itcinc
+		itcinc_list.append([itcinc,doc])
 
-		itcinc_list.sort()
-		result = itcinc_list[::-1]
-		print "ANSWER:" , result
-		output_size = len(result) 
-		for i in range(output_size):
-			if (i >= len(result)):
-				break
-			outFile.write(result[i][1] + " ")
-		
-		outFile.write("\n")
-		outFile.close()
-		return result
-		
+	itcinc_list.sort()
+	result = itcinc_list[::-1]
+	print "ANSWER:" , result
+	output_size = len(result) 
+	for i in range(output_size):
+		if (i >= len(result)):
+			break
+		outFile.write(result[i][1] + " ")
+	
+	outFile.write("\n")
+	outFile.close()
+	return result
+	
 		
 
 def calTFWT(qList):

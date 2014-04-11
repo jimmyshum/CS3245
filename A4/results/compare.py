@@ -47,12 +47,14 @@ f.close()
 print result
 
 count = 0
+i = 0
 for rterm in result:
+    i = i +1
     for eterm in expect:
         rterm_mod = rterm[:-4] + '\r\n'
         if rterm_mod == eterm :
             count +=  1
-            print eterm
+            print i, ": ", eterm
 
 print "count :", count, 
 print "\n size =", len(result)
