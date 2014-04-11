@@ -100,11 +100,11 @@ def index(directory_of_documents, dictionary_name, posting_name):
 		title_tokens.sort()
 		# print "title: ", title_tokens
 
-
+		title_bonus = 3
 
 		# find replicate and count the freq, store into 2D list 
 		freq = []
-		count = 1
+		count = 1 * title_bonus
 		prv_token = ""
 		one_token = ""
 		for one_token in title_tokens:
@@ -112,11 +112,11 @@ def index(directory_of_documents, dictionary_name, posting_name):
 				prv_token = one_token
 				continue
 			if (one_token == prv_token):
-				count = count + 1
+				count = count + title_bonus
 				prv_token = one_token
 			else:
 				freq.append([prv_token,count])
-				count = 1
+				count = title_bonus
 				prv_token = one_token
 		freq.append([prv_token,count]) # for the last token 
 		
