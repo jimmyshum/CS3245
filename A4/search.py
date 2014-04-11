@@ -47,7 +47,7 @@ def search(dictionary_file,postings_file,input_file,output_file):
 	for i in range(output_size):
 		if (i >= len(result)):
 			break
-		outFile.write(result[i][1] + " ")
+		outFile.write(result[i][1][:-4] + " ")
 	
 	outFile.write("\n")
 	outFile.close()

@@ -51,7 +51,7 @@ i = 0
 for rterm in result:
     i = i +1
     for eterm in expect:
-        rterm_mod = rterm[:-4] + '\r\n'
+        rterm_mod = rterm + '\r\n'
         if rterm_mod == eterm :
             count +=  1
             print i, ": ", eterm
